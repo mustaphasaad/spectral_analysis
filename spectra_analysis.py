@@ -2,10 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import peakutils
+from scipy import signal
 
 #loads spectrum file.
 dirpath = os.getcwd()
-filepath = dirpath + '/7908.spe'
+filepath = dirpath + '/cs137.spe'
 file = open(filepath)
 lines = file.readlines()
 
@@ -26,9 +27,11 @@ for i in range(len(lines)):
 channels = np.array(range(int(start),int(end)+1))
 energies = slope * channels + offset
 
+smoothed_data = signal.wiener(counts)
+
 #plots spectrum with identified peaks.
 plt.figure(0)
-indices = peakutils.peak.indexes(counts, thres=0.5)
+indices = peakutils.peak.indexes(smoothed_data, thres=0.5)
 plt.plot(channels, counts)
 plt.plot(indices, counts[indices], 'x')
 
